@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const knex = require('../data/dbConfig.js');
 
+
 router.get('/', (req, res) => {
     knex.select('*').from('accounts')
         .then(account => {
@@ -32,7 +33,8 @@ router.post('/', (req, res) => {
         .insert(accountData, "id")
         .then(ids => {
             const id = ids[0]
-            return knex("accounts") // THIS MAKES SURE TO RETURN AN ENTIRE ARRAY OF YOU NEW INPUT
+            return knex("accounts")
+                .select('name', 'budget') // THIS MAKES SURE TO RETURN AN ENTIRE ARRAY OF YOU NEW INPUT
                 .where({ id })
                 .then(account => {
                     res.status(200).json(account)
@@ -42,6 +44,13 @@ router.post('/', (req, res) => {
             console.log(err)
             res.status(500).json({ errorMessage: 'Error creating this account.'})
         })
+})
+
+router.post('/:id', (req, res) => {
+    const accountData = req.body;
+    const { id } = req.params;
+
+    knex('accounts').update(id, accountData).then().catch()
 })
 
 
