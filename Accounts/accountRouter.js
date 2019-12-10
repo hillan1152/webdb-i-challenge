@@ -54,9 +54,14 @@ router.put("/:id", (req, res) => {
 
   knex("accounts")
     .where({ id })
-    .update(id, changes)
+    .update(changes)
     .then(count => {
-      res.status(200).json({ message: `${count} record(s) updated.` });
+      if (count > 0) {
+        console.log(count);
+        res.status(200).json({ message: `${count} record(s) updated.` });
+      } else {
+        res.status(404).json({ message: `Post not found.` });
+      }
     })
     .catch(err => {
       console.log(err);
@@ -69,9 +74,13 @@ router.delete("/:id", (req, res) => {
 
   knex("accounts")
     .where({ id })
-    .delete()
+    .del()
     .then(count => {
-      res.status(204).json({ message: `${count} record(s) deleted.` });
+      if (count > 0) {
+        res.status(200).json({ message: `${count} record(s) deleted.` });
+      } else {
+        res.status(404).json({ message: `Post not found.` });
+      }
     })
     .catch(err => {
       res.status(500).json({ errorMessage: "Error removing this account." });
